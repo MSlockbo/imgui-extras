@@ -25,9 +25,13 @@ namespace ImGui
     bool InputUInt3(const char* label, unsigned int v[3], ImGuiInputTextFlags flags = 0);
     bool InputUInt4(const char* label, unsigned int v[4], ImGuiInputTextFlags flags = 0);
 
-    bool ColorPreview(const char* label, float  v[4], ImGuiColorEditFlags flags = 0);
-    inline bool ColorPreview(const char* label, ImVec4 color, ImGuiColorEditFlags flags = 0) { ColorPreview(label, &color.x, flags); }
-    inline bool ColorPreview(const char* label, ImColor color, ImGuiColorEditFlags flags = 0) { ColorPreview(label, &color.Value.x, flags); }
+    bool ColorPreview3(const char* label, float  v[3], ImGuiColorEditFlags flags = 0);
+    inline bool ColorPreview3(const char* label, ImVec4 color, ImGuiColorEditFlags flags = 0) { ColorPreview3(label, &color.x, flags); }
+    inline bool ColorPreview3(const char* label, ImColor color, ImGuiColorEditFlags flags = 0) { ColorPreview3(label, &color.Value.x, flags); }
+
+    bool ColorPreview4(const char* label, float  v[4], ImGuiColorEditFlags flags = 0);
+    inline bool ColorPreview4(const char* label, ImVec4 color, ImGuiColorEditFlags flags = 0) { ColorPreview4(label, &color.x, flags); }
+    inline bool ColorPreview4(const char* label, ImColor color, ImGuiColorEditFlags flags = 0) { ColorPreview4(label, &color.Value.x, flags); }
 }
 
 #endif //IMGUI_EXTRAS_H

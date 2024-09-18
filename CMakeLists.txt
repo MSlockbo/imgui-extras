@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(imgui-extras)
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 1)
+set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+
+project(imgui-extras VERSION ${PROJECT_VERSION})
 
 add_library(imgui-extras STATIC imgui_extras.h imgui_extras.cpp)
 

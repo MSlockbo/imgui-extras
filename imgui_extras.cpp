@@ -38,14 +38,53 @@ bool ImGui::InputUInt4(const char* label, unsigned int v[4], ImGuiInputTextFlags
     return InputScalarN(label, ImGuiDataType_S32, v, 4, NULL, NULL, "%d", flags);
 }
 
-bool ImGui::ColorPreview(const char *label, float col[4], ImGuiColorEditFlags flags)
+bool ImGui::ColorPreview3(const char *label, float col[3], ImGuiColorEditFlags flags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems) return false;
 
     ImGuiContext& g = *GetCurrentContext();
     const ImGuiStyle& style = g.Style;
-    const ImGuiID id = window->GetID(label);
+
+    ImVec2 size = CalcItemSize({ 0, 0 }, CalcItemWidth(), GetFrameHeight());
+    bool value_changed = false;
+
+    flags |= ImGuiColorEditFlags_NoAlpha;
+
+    ImVec4 col_v4 = { col[0], col[1], col[2], 1 };
+    if (ColorButton("##ColorButton", col_v4, flags, size))
+    {
+        if (!(flags & ImGuiColorEditFlags_NoPicker))
+        {
+            // Store current color and open a picker
+            g.ColorPickerRef = col_v4;
+            OpenPopup("picker");
+            SetNextWindowPos(g.LastItemData.Rect.GetBL() + ImVec2(0.0f, style.ItemSpacing.y));
+        }
+    }
+
+    if (BeginPopup("picker"))
+    {
+        if (g.CurrentWindow->BeginCount == 1)
+        {
+            ImGuiColorEditFlags picker_flags_to_forward = ImGuiColorEditFlags_DataTypeMask_ | ImGuiColorEditFlags_PickerMask_ | ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaBar;
+            ImGuiColorEditFlags picker_flags = (flags & picker_flags_to_forward) | ImGuiColorEditFlags_DisplayMask_ | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaPreviewHalf;
+            SetNextItemWidth(size.x * 2.0f); // Use 256 + bar sizes?
+            value_changed |= ColorPicker4("##picker", col, picker_flags, &g.ColorPickerRef.x);
+        }
+        EndPopup();
+    }
+
+    return value_changed;
+}
+
+bool ImGui::ColorPreview4(const char *label, float col[4], ImGuiColorEditFlags flags)
+{
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems) return false;
+
+    ImGuiContext& g = *GetCurrentContext();
+    const ImGuiStyle& style = g.Style;
 
     ImVec2 size = CalcItemSize({ 0, 0 }, CalcItemWidth(), GetFrameHeight());
     bool value_changed = false;
@@ -68,7 +107,7 @@ bool ImGui::ColorPreview(const char *label, float col[4], ImGuiColorEditFlags fl
         {
             ImGuiColorEditFlags picker_flags_to_forward = ImGuiColorEditFlags_DataTypeMask_ | ImGuiColorEditFlags_PickerMask_ | ImGuiColorEditFlags_InputMask_ | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaBar;
             ImGuiColorEditFlags picker_flags = (flags & picker_flags_to_forward) | ImGuiColorEditFlags_DisplayMask_ | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_AlphaPreviewHalf;
-            SetNextItemWidth(size.x * 1.5f); // Use 256 + bar sizes?
+            SetNextItemWidth(size.x * 2.0f); // Use 256 + bar sizes?
             value_changed |= ColorPicker4("##picker", col, picker_flags, &g.ColorPickerRef.x);
         }
         EndPopup();
